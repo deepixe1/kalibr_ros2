@@ -17,12 +17,24 @@ echo -e "${GREEN}Kalibr ROS2 Workspace Build Script${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
+# Each package is built in a separate colcon invocation.  Make packages that
+# were installed by earlier invocations visible to CMake, and also support
+# resuming a partially completed build with --layer/--from-layer.
+source_workspace() {
+    local setup_file="${SCRIPT_DIR}/install/setup.bash"
+    if [ -f "${setup_file}" ]; then
+        # shellcheck disable=SC1090
+        source "${setup_file}"
+    fi
+}
+
 # Function to build a specific package
 build_package() {
     local pkg_name=$1
     echo -e "${YELLOW}Building package: ${pkg_name}${NC}"
     
     if colcon build --packages-select "${pkg_name}" --cmake-args -DCMAKE_BUILD_TYPE=Release; then
+        source_workspace
         echo -e "${GREEN}✓ Successfully built ${pkg_name}${NC}"
         return 0
     else
@@ -63,6 +75,9 @@ elif [ "$1" == "--from-layer" ] && [ -n "$2" ]; then
     START_LAYER=$2
     echo "Building from layer $START_LAYER to end"
 fi
+
+# Reuse successfully installed packages when continuing an interrupted build.
+source_workspace
 
 # Layer 1: Basic utilities (no internal dependencies)
 if [ $START_LAYER -le 1 ] && [ $END_LAYER -ge 1 ]; then
