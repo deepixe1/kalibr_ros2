@@ -98,6 +98,7 @@ class IccCamera():
             options = acv_april.AprilgridOptions() 
             options.showExtractionVideo = showExtraction
             options.minTagsForValidObs = int( np.max( [targetParams['tagRows'], targetParams['tagCols']] ) + 1 )
+            options.blackTagBorder = targetParams['blackTagBorder']
             
             grid = acv_april.GridCalibrationTargetAprilgrid(targetParams['tagRows'],
                                                             targetParams['tagCols'], 

@@ -110,6 +110,7 @@ class TargetDetector(object):
             #enforce more than one row --> pnp solution can be bad if all points are almost on a line...
             options.minTagsForValidObs = int( np.max( [targetParams['tagRows'], targetParams['tagCols']] ) + 1 )
             options.showExtractionVideo = showCorners
+            options.blackTagBorder = targetParams['blackTagBorder']
             
             self.grid = acv_april.GridCalibrationTargetAprilgrid(targetParams['tagRows'], 
                                                                  targetParams['tagCols'], 
@@ -285,4 +286,3 @@ class CameraCalibration(object):
         else:
             sm.logDebug("The estimator did not accept this batch")
         return success
-

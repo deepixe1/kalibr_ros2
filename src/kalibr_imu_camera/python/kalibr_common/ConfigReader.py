@@ -607,6 +607,7 @@ class CalibrationTargetParameters(ParametersBase):
                 tagCols = self.data["tagCols"]
                 tagSize = self.data["tagSize"]
                 tagSpacing = self.data["tagSpacing"]
+                blackTagBorder = self.data.get("blackTagBorder", 2)
             except KeyError as e:
                 self.raiseError("Calibration target configuration in {0} is missing the field: {1}".format(self.yamlFile, str(e)) )
             
@@ -618,11 +619,14 @@ class CalibrationTargetParameters(ParametersBase):
                 errList.append("invalid tagSize (float)")
             if not isinstance(tagSpacing,float) or tagSpacing <= 0.0:
                 errList.append("invalid tagSpacing (float)")
+            if not isinstance(blackTagBorder, int) or blackTagBorder < 1:
+                self.raiseError("invalid blackTagBorder (int>=1)")
                 
             targetParams = {'tagRows': tagRows,
                             'tagCols': tagCols,
                             'tagSize': tagSize,
                             'tagSpacing': tagSpacing,
+                            'blackTagBorder': blackTagBorder,
                             'targetType': targetType}
             
         return targetParams
@@ -650,6 +654,7 @@ class CalibrationTargetParameters(ParametersBase):
             print("    Cols: {0}".format(targetParams['tagCols']), file=dest)
             print("    Size: {0} [m]".format(targetParams['tagSize']), file=dest)
             print("    Spacing {0} [m]".format( targetParams['tagSize']*targetParams['tagSpacing'] ), file=dest)
+            print("    Black border: {0} modules".format(targetParams['blackTagBorder']), file=dest)
 
 
         
